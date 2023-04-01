@@ -1,0 +1,268 @@
+{
+    "algs": [
+        {
+            "name": "Greedy-Shared",
+            "alg_module": "base.algorithms.greedy",
+            "alg_class": "ContextualGreedy",
+            "env": "Contextual",
+            "active": false,
+            "params": {
+                "params_model_class": "ParameterModelNN",
+                "params_model_class_config": {
+                    "hidden_size": 4
+                },
+                "regularization_factor_mle": 0,
+                "mle_method": "GD",
+                "mle_recycle": true,
+                "batch_size": 1,
+                "mle_lr": 0.03,
+                "mle_steps": 100
+            }
+        },
+        {
+            "name": "M3P-Shared",
+            "alg_module": "m3p.algorithms",
+            "alg_class": "ContextualM3P",
+            "env": "Contextual",
+            "active": false,
+            "params": {
+                "params_model_class": "ParameterModelNN",
+                "params_model_class_config": {
+                    "hidden_size": 4
+                },
+                "regularization_factor_mle": 0,
+                "mle_method": "GD",
+                "mle_recycle": true,
+                "mle_lr": 0.03,
+                "mle_steps": 100,
+                "exploration_mult": 4
+            }
+        },
+        {
+            "name": "TS-Langevin-Shared",
+            "alg_module": "ts.algorithms",
+            "alg_class": "ContextualThompsonSamplingLangevin",
+            "env": "Contextual",
+            "active": true,
+            "params": {
+                "N_t": 100,
+                "params_model_class": "ParameterModelNN",
+                "params_model_class_config": {
+                    "hidden_size": 4
+                },
+                "eta_scale": 0.03,
+                "psi_inverse": 1,
+                "decay": true,
+                "regularization_factor_mle": 0,
+                "batch": false,
+                "N_t_explore": 0
+            }
+        },
+        {
+            "name": "Greedy-NotShared",
+            "alg_module": "base.algorithms.greedy",
+            "alg_class": "ContextualGreedy",
+            "env": "Contextual",
+            "active": true,
+            "params": {
+                "params_model_class": "ParameterModelNNNotShared",
+                "params_model_class_config": {
+                    "hidden_size": 4
+                },
+                "regularization_factor_mle": 0,
+                "mle_method": "GD",
+                "mle_recycle": true,
+                "batch_size": 1,
+                "mle_lr": 0.03,
+                "mle_steps": 100
+            }
+        },
+        {
+            "name": "M3P-NotShared",
+            "alg_module": "m3p.algorithms",
+            "alg_class": "ContextualM3P",
+            "env": "Contextual",
+            "active": true,
+            "params": {
+                "params_model_class": "ParameterModelNNNotShared",
+                "params_model_class_config": {
+                    "hidden_size": 4
+                },
+                "regularization_factor_mle": 0,
+                "mle_method": "GD",
+                "mle_recycle": true,
+                "mle_lr": 0.03,
+                "mle_steps": 100,
+                "exploration_mult": 4
+            }
+        },
+        {
+            "name": "TS-Langevin-NotShared",
+            "alg_module": "ts.algorithms",
+            "alg_class": "ContextualThompsonSamplingLangevin",
+            "env": "Contextual",
+            "active": true,
+            "params": {
+                "N_t": 100,
+                "params_model_class": "ParameterModelNNNotShared",
+                "params_model_class_config": {
+                    "hidden_size": 4
+                },
+                "eta_scale": 0.03,
+                "psi_inverse": 1,
+                "decay": true,
+                "regularization_factor_mle": 0,
+                "batch": false,
+                "N_t_explore": 0
+            }
+        },
+        {
+            "name": "Greedy-Linear",
+            "alg_module": "base.algorithms.greedy",
+            "alg_class": "ContextualGreedy",
+            "env": "Contextual",
+            "active": false,
+            "params": {
+                "params_model_class": "ParameterModelLinear",
+                "params_model_class_config": {},
+                "regularization_factor_mle": 0,
+                "mle_method": "GD",
+                "mle_recycle": true,
+                "batch_size": 1,
+                "mle_lr": 0.03,
+                "mle_steps": 100
+            }
+        },
+        {
+            "name": "M3P-Linear",
+            "alg_module": "m3p.algorithms",
+            "alg_class": "ContextualM3P",
+            "env": "Contextual",
+            "active": false,
+            "params": {
+                "params_model_class": "ParameterModelLinear",
+                "params_model_class_config": {},
+                "regularization_factor_mle": 0,
+                "mle_method": "GD",
+                "mle_recycle": true,
+                "mle_lr": 0.03,
+                "mle_steps": 100,
+                "exploration_mult": 4
+            }
+        },
+        {
+            "name": "TS-Langevin-Linear",
+            "alg_module": "ts.algorithms",
+            "alg_class": "ContextualThompsonSamplingLangevin",
+            "env": "Contextual",
+            "active": true,
+            "params": {
+                "N_t": 100,
+                "params_model_class": "ParameterModelLinear",
+                "params_model_class_config": {},
+                "eta_scale": 0.03,
+                "psi_inverse": 1,
+                "decay": true,
+                "regularization_factor_mle": 0,
+                "batch": false,
+                "N_t_explore": 0
+            }
+        }
+    ],
+    "global": {
+        "exp_name": "7-3-contextual-nonlinear-8groups",
+        "negative_beta_option": "max",
+        "model_class": "NearestCenter",
+        "model_file": "NearestCenter_4in-8c-9*3out-random",
+        "model_init_params": {
+            "n_groups": 8
+        },
+        "context_size": 4,
+        "show_plays": false,
+        "write_runs": false,
+        "checkpoint": 2000,
+        "costs": "zero",
+        "K": 9,
+        "context_distribution": "gmm",
+        "context_distribution_params": {
+            "probs": [
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125,
+                0.125
+            ],
+            "groups": [
+                [
+                    1.5332953929901123,
+                    0.27913743257522583,
+                    -0.30465424060821533,
+                    0.3206218183040619
+                ],
+                [
+                    1.2733465433120728,
+                    1.1627527475357056,
+                    -1.8623826503753662,
+                    -0.13109908998012543
+                ],
+                [
+                    -0.8561606407165527,
+                    0.9631218910217285,
+                    1.134903073310852,
+                    0.6243076324462891
+                ],
+                [
+                    0.5939474701881409,
+                    1.1283042430877686,
+                    -0.8742088675498962,
+                    -0.11403918266296387
+                ],
+                [
+                    -0.29553332924842834,
+                    -0.09153769910335541,
+                    1.4044926166534424,
+                    0.6517578959465027
+                ],
+                [
+                    -0.8896533250808716,
+                    1.0243401527404785,
+                    -1.8955029249191284,
+                    -1.8796586990356445
+                ],
+                [
+                    -0.12443052977323532,
+                    -1.3115111589431763,
+                    1.4394502639770508,
+                    0.07800387591123581
+                ],
+                [
+                    -0.8429902791976929,
+                    0.534388542175293,
+                    -0.14499227702617645,
+                    0.6617202162742615
+                ]
+            ],
+            "group_stds": [
+                0.12,
+                0.12,
+                0.12,
+                0.12,
+                0.12,
+                0.12,
+                0.12,
+                0.12
+            ]
+        },
+        "max_T": 100,
+        "log_prog_every": 50,
+        "num_threads": 40,
+        "batch_size": 100,
+        "repeat": 16,
+        "tau": 8,
+        "el": 0.25,
+        "u": 35
+    }
+}

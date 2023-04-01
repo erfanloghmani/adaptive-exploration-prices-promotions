@@ -1,0 +1,85 @@
+{
+    "algs": [
+        {
+            "name": "Greedy",
+            "alg_module": "base.algorithms.greedy",
+            "alg_class": "ContextualGreedy",
+            "env": "Contextual",
+            "active": true,
+            "params": {
+                "params_model_class": "ParameterModelLinear",
+                "params_model_class_config": {},
+                "regularization_factor_mle": 0,
+                "mle_method": "GD",
+                "mle_recycle": true,
+                "batch_size": 1,
+                "mle_lr": 0.03,
+                "mle_steps": 100
+            }
+        },
+        {
+            "name": "M3P",
+            "alg_module": "m3p.algorithms",
+            "alg_class": "ContextualM3P",
+            "env": "Contextual",
+            "active": true,
+            "params": {
+                "params_model_class": "ParameterModelLinear",
+                "params_model_class_config": {},
+                "regularization_factor_mle": 0,
+                "mle_method": "GD",
+                "mle_recycle": true,
+                "mle_lr": 0.03,
+                "mle_steps": 100,
+                "exploration_mult": 6
+            }
+        },
+        {
+            "name": "TS-Langevin",
+            "alg_module": "ts.algorithms",
+            "alg_class": "ContextualThompsonSamplingLangevin",
+            "env": "Contextual",
+            "active": true,
+            "params": {
+                "N_t": 100,
+                "params_model_class": "ParameterModelLinear",
+                "params_model_class_config": {},
+                "eta_scale": 0.03,
+                "psi_inverse": 0.04,
+                "decay": true,
+                "regularization_factor_mle": 0,
+                "batch": false,
+                "N_t_explore": 0
+            }
+        }
+    ],
+    "global": {
+        "exp_name": "7-2-contextual-nielsen-quarter-store",
+        "negative_beta_option": "max",
+        "model_class": "ParameterModelLinear",
+        "model_file": "Nielsen-6in-quarter-store-9*3out",
+        "model_init_params": {},
+        "context_size": 6,
+        "show_plays": false,
+        "write_runs": false,
+        "checkpoint": 2000,
+        "costs": "zero",
+        "K": 9,
+        "context_distribution": "store_quarter",
+        "context_distribution_params": {
+            "store_ratios": [
+                0.7,
+                0.3
+            ]
+        },
+        "max_T": 100,
+        "fix_model": false,
+        "log_prog_every": 200,
+        "num_threads": 40,
+        "batch_size": 100,
+        "repeat": 10,
+        "tau": 8,
+        "el": 0.25,
+        "u": 40
+    }
+}

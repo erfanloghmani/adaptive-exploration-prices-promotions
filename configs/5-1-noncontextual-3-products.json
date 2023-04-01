@@ -1,0 +1,53 @@
+{
+	"algs": [
+		{
+			"name": "TS-Laplace-Batch-10-lr0.0001",
+			"alg_module": "ts.algorithms",
+			"alg_class": "ThompsonSamplingLaplace",
+			"env": "NonContextual",
+			"active": false,
+			"params": {
+				"mle_lr": 0.0001,
+				"mle_method": "GD",
+				"mle_recycle": true,
+				"exploration_rate": 0.5,
+				"regularization_factor_H": 1,
+				"regularization_factor_mle": 1,
+				"fix_model": true,
+				"batch_size": 10
+			}
+		},
+		{
+			"name": "Greedy-Batch-10-lr0.0001",
+			"alg_module": "base.algorithms.greedy",
+			"alg_class": "Greedy",
+			"env": "NonContextual",
+			"active": false,
+			"params": {
+				"regularization_factor_mle": 1,
+				"mle_method": "GD",
+				"mle_recycle": true,
+				"mle_lr": 0.0001,
+				"batch_size": 10,
+				"mle_steps": 100
+			}
+		}
+	],
+	"global": {
+		"exp_name": "5-1-noncontextual-3-products",
+		"negative_beta_option": "max",
+		"model_init_params": {},
+		"dataset": "sigmam0",
+		"show_plays": false,
+		"write_runs": false,
+		"checkpoint": 2000,
+		"costs": "zero",
+		"K": 3,
+		"max_T": 50000,
+		"log_prog_every": 200,
+		"repeat": 40,
+		"tau": 10,
+		"el": 0.25,
+		"u": 30
+	}
+}

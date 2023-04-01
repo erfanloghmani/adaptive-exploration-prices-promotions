@@ -1,0 +1,93 @@
+{
+	"algs": [
+		{
+			"name": "M3P",
+			"alg_module": "m3p.algorithms",
+			"alg_class": "ContextualM3P",
+			"env": "Contextual",
+			"active": true,
+			"params": {
+				"params_model_class": "ParameterModelLinear",
+				"params_model_class_config": {},
+				"regularization_factor_mle": 1,
+				"mle_method": "GD",
+				"mle_recycle": true,
+				"mle_lr": 0.03,
+				"mle_steps": 100,
+				"exploration_mult": 4
+			}
+		},
+		{
+			"name": "TS-Langevin-NC",
+			"alg_module": "ts.algorithms",
+			"alg_class": "ThompsonSamplingLangevin",
+			"env": "Contextual",
+			"active": true,
+			"params": {
+				"N_t": 100,
+				"eta_scale": 0.03,
+				"psi_inverse": 1,
+				"decay": true,
+				"regularization_factor_mle": 1,
+				"fix_model": true,
+				"batch_size": 1
+			}
+		},
+		{
+			"name": "Greedy",
+			"alg_module": "base.algorithms.greedy",
+			"alg_class": "ContextualGreedy",
+			"env": "Contextual",
+			"active": true,
+			"params": {
+				"params_model_class": "ParameterModelLinear",
+				"params_model_class_config": {},
+				"regularization_factor_mle": 1,
+				"mle_method": "GD",
+				"mle_recycle": true,
+				"batch_size": 1,
+				"mle_lr": 0.03,
+				"mle_steps": 100
+			}
+		},
+		{
+			"name": "TS-Langevin",
+			"alg_module": "ts.algorithms",
+			"alg_class": "ContextualThompsonSamplingLangevin",
+			"env": "Contextual",
+			"active": true,
+			"params": {
+				"N_t": 100,
+				"params_model_class": "ParameterModelLinear",
+				"params_model_class_config": {},
+				"eta_scale": 0.03,
+				"psi_inverse": 1,
+				"decay": true,
+				"regularization_factor_mle": 1,
+				"batch": true,
+				"batch_size": 1,
+				"N_t_explore": 0
+			}
+		}
+	],
+	"global": {
+		"exp_name": "7-1-contextual-linear-box",
+		"negative_beta_option": "max",
+		"model_class": "ParameterModelLinear",
+		"model_file": "Linear-4in-9*3out",
+		"model_init_params": {},
+		"context_size": 4,
+		"show_plays": false,
+		"write_runs": false,
+		"checkpoint": 2000,
+		"costs": "zero",
+		"K": 9,
+		"context_distribution": "box",
+		"max_T": 100,
+		"log_prog_every": 200,
+		"repeat": 20,
+		"tau": 10,
+		"el": 0,
+		"u": 30
+	}
+}
