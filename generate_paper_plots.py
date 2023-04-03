@@ -27,7 +27,6 @@ rolling_window = 300
 DPI = 600
 
 parser = argparse.ArgumentParser(description="Generate plots for the paper")
-parser.add_argument("-T", type=int, default=100)
 parser.add_argument("-experiment", type=str)
 parser.add_argument("-result_path", type=str, default="results")
 parser.add_argument("--all", action="store_true")
@@ -242,6 +241,124 @@ x_set_9 = torch.cat([torch.zeros([1, 9]), torch.eye(9)])
 costs_9 = torch.zeros(9)
 
 
+def plots_5_1_noncontextual_3_products_prices(T, segments):
+    exp_name = f"5-1-noncontextual-3-products_3_rep40_T{T}"
+    df_3p_prices = pd.read_csv(f"{result_path}/{exp_name}/price_history.csv")
+    product_id = 0
+    df_3p_prices["price"] = df_3p_prices["prices"].apply(
+        lambda ps: json.loads(ps)[product_id]
+    )
+    for segment in segments:
+        segment_sel = (df_3p_prices["T"] > segment[0]) & (
+            df_3p_prices["T"] < segment[1]
+        )
+        data_TS = df_3p_prices[
+            df_3p_prices["Algorithm"].str.contains("TS") & segment_sel
+        ]["price"]
+        data_Greedy = df_3p_prices[
+            df_3p_prices["Algorithm"].str.contains("Greedy") & segment_sel
+        ]["price"]
+
+        plt.hist(data_Greedy, 50, label=GREEDY_LABEL, alpha=0.7, density=True)
+        plt.hist(data_TS, 50, label=TS_LABEL, alpha=0.6, density=True)
+        plt.xlim([15, 30])
+        plt.ylim([0, 0.6])
+        plt.legend(fontsize=LEGEND_FONT)
+        plt.xlabel("Price", fontsize=LABEL_FONT)
+        plt.xticks(fontsize=TICK_FONT)
+        plt.yticks(fontsize=TICK_FONT)
+        file_suffix = f"5-1-noncontextual-3-products-prices-{segment[0]}-{segment[1]}"
+        to_file = f"{result_path}/paper_plots/{file_suffix}.png"
+        plt.savefig(to_file, bbox_inches="tight")
+        print(f"Saved plot to {to_file}")
+        plt.clf()
+
+
+def plots_5_1_noncontextual_3_products_promotions(T, segments):
+    exp_name = f"5-1-noncontextual-3-products_3_rep40_T{T}"
+    df_3p_promotions = pd.read_csv(f"{result_path}/{exp_name}/x_history.csv")
+    for segment in segments:
+        segment_sel = (df_3p_promotions["T"] > segment[0]) & (
+            df_3p_promotions["T"] < segment[1]
+        )
+        width = 0.35
+        x = np.arange(4)
+        labels = ["Product 1", "Product 2", "Product 3", "No Promotion"]
+        fig, ax = plt.subplots()
+        for i, alg in enumerate(["Greedy", "TS"]):
+            label = TS_LABEL if alg == "TS" else GREEDY_LABEL
+            played = np.mean(
+                df_3p_promotions[
+                    df_3p_promotions["Algorithm"].str.contains(alg) & segment_sel
+                ]["xs"].apply(lambda x: np.fromstring(x[1:-1], sep=","))
+            )
+            played = np.append(played, 1 - np.sum(played))
+            ax.bar(x - (-1) ** i * width / 2, played, width, alpha=1, label=label)
+
+        ax.set_ylabel("Proportion", fontsize=16)
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels, fontsize=14)
+        ax.legend(fontsize=LEGEND_FONT)
+        ax.set_aspect(1.4)
+        ax.set_ylim([0, 1.1])
+        file_suffix = (
+            f"5-1-noncontextual-3-products-promotions-{segment[0]}-{segment[1]}"
+        )
+        to_file = f"{result_path}/paper_plots/{file_suffix}.png"
+        plt.savefig(to_file, bbox_inches="tight")
+        print(f"Saved plot to {to_file}")
+        plt.clf()
+
+
+def plots_5_1_noncontextual_3_products(T):
+    exp_name = f"5-1-noncontextual-3-products_3_rep40_T{T}"
+    df_3p = pd.read_csv(f"{result_path}/{exp_name}/regret.csv")
+    legend_3p_noncontext = {
+        "TS-Laplace-Batch-10-lr0.0001": TS_LABEL,
+        "Greedy-Batch-10-lr0.0001": GREEDY_LABEL,
+    }
+    colors_3p_noncontext = {
+        "TS-Laplace-Batch-10-lr0.0001": "C1",
+        "Greedy-Batch-10-lr0.0001": "C0",
+    }
+    style_3p_noncontext = {
+        "TS-Laplace-Batch-10-lr0.0001": "-",
+        "Greedy-Batch-10-lr0.0001": "-",
+    }
+
+    K = 3
+    alphas = torch.tensor([1, 2, 3, 1, 2, 3]).float()[:K]
+    betas = torch.tensor([0.1, 0.2, 0.3, 0.5, 0.6, 0.7]).float()[:K]
+    gammas = torch.tensor([0.8, 0.5, 0.3, 0.1, 0.1, 0.1]).float()[:K]
+    env = MultipleProbobalisticEnvironment(
+        alphas=alphas,
+        betas=betas,
+        gammas=gammas,
+        x_set=torch.cat([torch.zeros([1, K]), torch.eye(K)]),
+        el=0,
+        u=40,
+        marginal_costs=torch.zeros(K),
+        show_plays=False,
+        T=1000,
+    )
+
+    generate_plots(
+        df=df_3p,
+        a=legend_3p_noncontext,
+        env=env,
+        file_suffix=exp_name,
+        batch_size=1,
+        colors=colors_3p_noncontext,
+        style=style_3p_noncontext,
+        file_format="png",
+        max_T=T,
+        percent_ylim_bottom=80,
+    )
+    segments = [(0, 2000), (10000, 20000), (40000, 50000)]
+    plots_5_1_noncontextual_3_products_prices(T, segments)
+    plots_5_1_noncontextual_3_products_promotions(T, segments)
+
+
 def plots_5_2_noncontextual_nielsen_batch_200(T, env_nielsen):
     exp_name = f"5-2-noncontextual-nielsen-batch-200_9_rep40_T{T}"
     df_nielsen = pd.read_csv(f"{result_path}/{exp_name}/regret.csv")
@@ -398,6 +515,217 @@ def plots_5_2_noncontextual_nielsen(T):
     df_nielsen_full = pd.concat([df_nielsen_10, df_nielsen_200])
     plots_5_2_noncontextual_nielsen_batch_10_greedy(T, df_nielsen_full, env_nielsen)
     plots_5_2_noncontextual_nielsen_batch_10_ts(T, df_nielsen_full, env_nielsen)
+
+
+def plots_7_1_contextual_linear_context(T, context_name):
+    exp_name = f"7-1-contextual-linear-{context_name}_9_rep20_T{T}"
+    df_context_lin = pd.read_csv(f"{result_path}/{exp_name}/regret.csv")
+
+    pm = ParameterModelLinear(K=9, context_size=4)
+    pm.load_state_dict(torch.load("torch_models/Linear-4in-9*3out.pkl"))
+
+    env = MultipleProbobalisticContextualEnvironment(
+        params_model=pm,
+        K=9,
+        context_size=4,
+        context_distribution=context_name,
+        negative_beta_option="max",
+        x_set=x_set_9,
+        marginal_costs=costs_9,
+        el=0,
+        u=3,
+        context_distribution_params={},
+        T=1000,
+    )
+    legend_linear_context = {
+        "TS-Langevin": TS_LABEL,
+        "Greedy": GREEDY_LABEL,
+        "M3P": M3P_LABEL,
+    }
+    colors_linear_context = {
+        "TS-Langevin": "red",
+        "Greedy": "blue",
+        "M3P": "orange",
+    }
+    style_linear_context = {
+        "TS-Langevin": "-",
+        "Greedy": "-",
+        "M3P": "-",
+    }
+    generate_plots(
+        df=df_context_lin,
+        a=legend_linear_context,
+        env=env,
+        file_suffix=exp_name,
+        batch_size=1,
+        colors=colors_linear_context,
+        style=style_linear_context,
+        file_format="png",
+        max_T=T,
+        percent_ylim_bottom=70,
+    )
+    return df_context_lin, env
+
+
+def plots_7_1_contextual_linear_context_nc(T, context_name, df_context_lin, env):
+    legend_linear_context = {
+        "TS-Langevin": "TS Contextual",
+        "TS-Langevin-NC": "TS Non-Contextual",
+    }
+    colors_linear_context = {
+        "TS-Langevin": "red",
+        "TS-Langevin-NC": "red",
+    }
+    style_linear_context = {
+        "TS-Langevin": "-",
+        "TS-Langevin-NC": "--",
+    }
+    generate_plots(
+        df=df_context_lin,
+        a=legend_linear_context,
+        env=env,
+        file_suffix=f"7-1-contextual-linear-{context_name}_9_rep20_T{T}_nc",
+        batch_size=1,
+        colors=colors_linear_context,
+        style=style_linear_context,
+        file_format="png",
+        max_T=T,
+        percent_ylim_bottom=70,
+        only_regret=True,
+    )
+
+
+def plots_7_1_contextual_linear_context_prices_orthogonal(T, env, segments):
+    exp_name = f"7-1-contextual-linear-orthogonal-groups_9_rep20_T{T}"
+    df_prices = pd.read_csv(f"{result_path}/{exp_name}/price_history.csv")
+    product_id = 6
+    df_prices["price"] = df_prices["prices"].apply(lambda x: json.loads(x)[product_id])
+
+    df_contexts = pd.read_csv(f"results/{exp_name}/context_history.csv")
+    context_sel = df_contexts[df_contexts["contexts"] == "[1.0, 0.0, 0.0, 0.0]"]
+    lines = []
+    context = torch.zeros((1, 4))
+    context[0, 0] = 1
+    p, x = env.model.max_mean_demand_price_x(context)
+    lines.append(p[0, 6].item())
+
+    max_x = 30
+    min_x = 5
+    max_y = 0.9
+    for segment in segments:
+        df_prices_s = df_prices.iloc[context_sel.index, :]
+        segment_sel = (df_prices_s["T"] > segment[0]) & (df_prices_s["T"] < segment[1])
+        data_TS = df_prices_s[
+            (df_prices_s["Algorithm"] == "TS-Langevin") & segment_sel
+        ]["price"]
+        data_Greedy = df_prices_s[(df_prices_s["Algorithm"] == "Greedy") & segment_sel][
+            "price"
+        ]
+
+        plt.vlines(lines, ymin=0, ymax=max_y, color="green", alpha=0.3, label="Optimum")
+        plt.hist(
+            data_Greedy,
+            80,
+            range=[min_x, max_x],
+            label=GREEDY_LABEL,
+            alpha=0.3,
+            density=True,
+        )
+        plt.hist(
+            data_TS, 80, range=[min_x, max_x], label=TS_LABEL, alpha=0.3, density=True
+        )
+        plt.xlim([min_x, max_x])
+        plt.ylim([0, max_y])
+        plt.legend(fontsize=LEGEND_FONT)
+        plt.xlabel("Price", fontsize=LABEL_FONT)
+        plt.xticks(fontsize=TICK_FONT)
+        plt.yticks(fontsize=TICK_FONT)
+
+        file_suffix = (
+            f"7-1-contextual-linear-orthogonal-groups-prices-{segment[0]}-{segment[1]}"
+        )
+        to_file = f"{result_path}/paper_plots/{file_suffix}.png"
+        plt.savefig(to_file, bbox_inches="tight")
+        print(f"Saved plot to {to_file}")
+        plt.clf()
+
+
+def plots_7_1_contextual_linear_context_prices_weighted(T, env, segments):
+    exp_name = f"7-1-contextual-linear-weighted-averages_9_rep20_T{T}"
+    df_prices = pd.read_csv(f"{result_path}/{exp_name}/price_history.csv")
+    product_id = 6
+    df_prices["price"] = df_prices["prices"].apply(lambda x: json.loads(x)[product_id])
+
+    lines = []
+    for c in range(1000):
+        context = env.next_c()
+        p, x = env.model.max_mean_demand_price_x(context)
+        lines.append(p[0, product_id].item())
+
+    max_x = 30
+    min_x = 5
+    max_y = 0.9
+    for segment in segments:
+        df_prices_s = df_prices
+        segment_sel = (df_prices_s["T"] > segment[0]) & (df_prices_s["T"] < segment[1])
+        data_TS = df_prices_s[
+            (df_prices_s["Algorithm"] == "TS-Langevin") & segment_sel
+        ]["price"]
+        data_Greedy = df_prices_s[(df_prices_s["Algorithm"] == "Greedy") & segment_sel][
+            "price"
+        ]
+
+        plt.hist(
+            lines,
+            80,
+            range=[min_x, max_x],
+            color="green",
+            alpha=0.3,
+            label="Optimum",
+            density=True,
+        )
+        plt.hist(
+            data_Greedy,
+            80,
+            range=[min_x, max_x],
+            label=GREEDY_LABEL,
+            alpha=0.3,
+            density=True,
+        )
+        plt.hist(
+            data_TS, 80, range=[min_x, max_x], label=TS_LABEL, alpha=0.3, density=True
+        )
+        plt.xlim([min_x, max_x])
+        plt.ylim([0, max_y])
+        plt.legend(fontsize=LEGEND_FONT)
+        plt.xlabel("Price", fontsize=LABEL_FONT)
+        plt.xticks(fontsize=TICK_FONT)
+        plt.yticks(fontsize=TICK_FONT)
+
+        file_suffix = (
+            f"7-1-contextual-linear-weighted-averages-prices-{segment[0]}-{segment[1]}"
+        )
+        to_file = f"{result_path}/paper_plots/{file_suffix}.png"
+        plt.savefig(to_file, bbox_inches="tight")
+        print(f"Saved plot to {to_file}")
+        plt.clf()
+
+
+def plots_7_1_contextual_linear(T):
+    for context_name in ["orthogonal-groups", "weighted-averages", "box"]:
+        df, env = plots_7_1_contextual_linear_context(T, context_name)
+        plots_7_1_contextual_linear_context_nc(
+            T, context_name, df_context_lin=df, env=env
+        )
+        segments = [(0, 1000), (5000, 6000), (19000, 20000)]
+        if context_name == "orthogonal-groups":
+            plots_7_1_contextual_linear_context_prices_orthogonal(
+                T=T, env=env, segments=segments
+            )
+        elif context_name == "weighted-averages":
+            plots_7_1_contextual_linear_context_prices_weighted(
+                T=T, env=env, segments=segments
+            )
 
 
 def plots_7_2_contextual_nielsen(T):
@@ -565,14 +893,23 @@ def plots_7_3_contextual_nonlinear(T):
 
 if __name__ == "__main__":
     experiment_map = {
+        "5-1": plots_5_1_noncontextual_3_products,
         "5-2": plots_5_2_noncontextual_nielsen,
+        "7-1": plots_7_1_contextual_linear,
         "7-2": plots_7_2_contextual_nielsen,
         "7-3": plots_7_3_contextual_nonlinear,
     }
-    os.makedirs("{result_path}/paper_plots", exist_ok=True)
+    T_map = {
+        "5-1": 50000,
+        "5-2": 20000,
+        "7-1": 20000,
+        "7-2": 40000,
+        "7-3": 40000,
+    }
+    os.makedirs(f"{result_path}/paper_plots", exist_ok=True)
     if not args.all:
         experiment_fun = experiment_map[args.experiment]
-        experiment_fun(args.T)
+        experiment_fun(T_map[args.experiment])
     else:
         for exp_id, experiment_fun in experiment_map.items():
-            experiment_fun(args.T)
+            experiment_fun(T_map[exp_id])

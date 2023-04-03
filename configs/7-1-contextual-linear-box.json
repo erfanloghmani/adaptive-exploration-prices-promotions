@@ -83,7 +83,7 @@
 		"costs": "zero",
 		"K": 9,
 		"context_distribution": "box",
-		"max_T": 100,
+		"max_T": 20000,
 		"log_prog_every": 200,
 		"repeat": 20,
 		"tau": 10,

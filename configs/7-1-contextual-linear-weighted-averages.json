@@ -20,7 +20,7 @@
 		{
 			"name": "TS-Langevin-NC",
 			"alg_module": "ts.algorithms",
-			"alg_class": "Langevin",
+			"alg_class": "ThompsonSamplingLangevin",
 			"env": "Contextual",
 			"active": true,
 			"params": {
@@ -81,9 +81,9 @@
 		"write_runs": false,
 		"checkpoint": 2000,
 		"costs": "zero",
-		"n": 9,
+		"K": 9,
 		"context_distribution": "weighted-averages",
-		"max_T": 100,
+		"max_T": 20000,
 		"log_prog_every": 200,
 		"repeat": 20,
 		"tau": 10,

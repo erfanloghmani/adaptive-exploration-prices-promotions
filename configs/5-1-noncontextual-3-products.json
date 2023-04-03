@@ -5,7 +5,7 @@
 			"alg_module": "ts.algorithms",
 			"alg_class": "ThompsonSamplingLaplace",
 			"env": "NonContextual",
-			"active": false,
+			"active": true,
 			"params": {
 				"mle_lr": 0.0001,
 				"mle_method": "GD",
@@ -22,7 +22,7 @@
 			"alg_module": "base.algorithms.greedy",
 			"alg_class": "Greedy",
 			"env": "NonContextual",
-			"active": false,
+			"active": true,
 			"params": {
 				"regularization_factor_mle": 1,
 				"mle_method": "GD",
@@ -37,7 +37,7 @@
 		"exp_name": "5-1-noncontextual-3-products",
 		"negative_beta_option": "max",
 		"model_init_params": {},
-		"dataset": "sigmam0",
+		"dataset": "simgam0",
 		"show_plays": false,
 		"write_runs": false,
 		"checkpoint": 2000,
