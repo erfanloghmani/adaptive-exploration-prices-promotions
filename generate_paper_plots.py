@@ -235,6 +235,7 @@ def generate_plots(
         metric=metric,
         **kwargs,
     )
+    return df
 
 
 x_set_9 = torch.cat([torch.zeros([1, 9]), torch.eye(9)])
@@ -728,10 +729,25 @@ def plots_7_1_contextual_linear(T):
             )
 
 
+def experiment_7_2_regret_comparison(T, df, legend):
+    def calc_improve(target):
+        d = df.groupby(["Algorithm", "T"]).agg({target: [np.mean, np.median, np.std]})
+        d.columns = d.columns.droplevel()
+        legend_inv = {value: key for key, value in legend.items()}
+        greedy_mean = d.loc[(legend_inv[GREEDY_LABEL], T - 1), "mean"]
+        ts_mean = d.loc[(legend_inv[TS_LABEL], T - 1), "mean"]
+        print(
+            f"TS has {(greedy_mean - ts_mean) / greedy_mean * 100:0.2f}% less {target} compared to Greedy"
+        )
+
+    calc_improve("Regret")
+    calc_improve("Regret-Percentage")
+
+
 def plots_7_2_contextual_nielsen(T):
     exp_name = f"7-2-contextual-nielsen-quarter-store_9_rep10_T{T}"
     df_nielsen = pd.read_csv(f"{result_path}/{exp_name}/regret.csv")
-    pm = ParameterModelLinear(n=9, context_size=6)
+    pm = ParameterModelLinear(K=9, context_size=6)
     pm.load_state_dict(torch.load("torch_models/Nielsen-6in-quarter-store-9*3out.pkl"))
     env_9_store = MultipleProbobalisticContextualEnvironment(
         params_model=pm,
@@ -743,7 +759,7 @@ def plots_7_2_contextual_nielsen(T):
         marginal_costs=costs_9,
         el=0,
         u=3,
-        context_distribution_params={"store_ratios": [0.7, 0.3]},
+        context_distribution_params={"store_ratios": [0.65, 0.35]},
         T=1000,
     )
     legend_nielsen_context = {
@@ -762,7 +778,7 @@ def plots_7_2_contextual_nielsen(T):
         "M3P": "-",
     }
 
-    generate_plots(
+    df = generate_plots(
         df=df_nielsen,
         a=legend_nielsen_context,
         env=env_9_store,
@@ -775,6 +791,8 @@ def plots_7_2_contextual_nielsen(T):
         percent_ylim_bottom=75,
     )
 
+    experiment_7_2_regret_comparison(T, df, legend_nielsen_context)
+
     del legend_nielsen_context["M3P"]
     env_9_store = MultipleProbobalisticContextualEnvironment(
         params_model=pm,
@@ -786,7 +804,7 @@ def plots_7_2_contextual_nielsen(T):
         marginal_costs=costs_9,
         el=0,
         u=3,
-        context_distribution_params={"store_ratios": [0.7, 0.3]},
+        context_distribution_params={"store_ratios": [0.65, 0.35]},
         T=1000,
     )
 
@@ -804,7 +822,7 @@ def plots_7_2_contextual_nielsen(T):
 
 
 def plots_7_3_contextual_nonlinear(T):
-    pm = NearestCenter(n=9, context_size=4, n_groups=8)
+    pm = NearestCenter(K=9, context_size=4, n_groups=8)
     pm.load_state_dict(
         torch.load("torch_models/NearestCenter_4in-8c-9*3out-random.pkl")
     )
@@ -871,8 +889,8 @@ def plots_7_3_contextual_nonlinear(T):
     }
 
     style_nonlin_with_ts_simple = {
-        "TS-Langevin-Linear": (0, (1, 10)),
-        "TS-Langevin-Shared": ":",
+        "TS-Langevin-Linear": "--",
+        "TS-Langevin-Shared": (0, (1, 10)),
         "TS-Langevin-NotShared": "-",
     }
 

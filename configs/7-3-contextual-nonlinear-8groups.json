@@ -11,7 +11,7 @@
                 "params_model_class_config": {
                     "hidden_size": 4
                 },
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "mle_method": "GD",
                 "mle_recycle": true,
                 "batch_size": 1,
@@ -30,7 +30,7 @@
                 "params_model_class_config": {
                     "hidden_size": 4
                 },
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "mle_method": "GD",
                 "mle_recycle": true,
                 "mle_lr": 0.03,
@@ -53,7 +53,7 @@
                 "eta_scale": 0.03,
                 "psi_inverse": 1,
                 "decay": true,
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "batch": false,
                 "N_t_explore": 0
             }
@@ -69,7 +69,7 @@
                 "params_model_class_config": {
                     "hidden_size": 4
                 },
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "mle_method": "GD",
                 "mle_recycle": true,
                 "batch_size": 1,
@@ -88,7 +88,7 @@
                 "params_model_class_config": {
                     "hidden_size": 4
                 },
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "mle_method": "GD",
                 "mle_recycle": true,
                 "mle_lr": 0.03,
@@ -111,7 +111,7 @@
                 "eta_scale": 0.03,
                 "psi_inverse": 1,
                 "decay": true,
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "batch": false,
                 "N_t_explore": 0
             }
@@ -125,7 +125,7 @@
             "params": {
                 "params_model_class": "ParameterModelLinear",
                 "params_model_class_config": {},
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "mle_method": "GD",
                 "mle_recycle": true,
                 "batch_size": 1,
@@ -142,7 +142,7 @@
             "params": {
                 "params_model_class": "ParameterModelLinear",
                 "params_model_class_config": {},
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "mle_method": "GD",
                 "mle_recycle": true,
                 "mle_lr": 0.03,
@@ -163,7 +163,7 @@
                 "eta_scale": 0.03,
                 "psi_inverse": 1,
                 "decay": true,
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "batch": false,
                 "N_t_explore": 0
             }
@@ -256,10 +256,8 @@
                 0.12
             ]
         },
-        "max_T": 100,
+        "max_T": 40000,
         "log_prog_every": 50,
-        "num_threads": 40,
-        "batch_size": 100,
         "repeat": 16,
         "tau": 8,
         "el": 0.25,

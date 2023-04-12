@@ -9,7 +9,7 @@
             "params": {
                 "params_model_class": "ParameterModelLinear",
                 "params_model_class_config": {},
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "mle_method": "GD",
                 "mle_recycle": true,
                 "batch_size": 1,
@@ -26,7 +26,7 @@
             "params": {
                 "params_model_class": "ParameterModelLinear",
                 "params_model_class_config": {},
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "mle_method": "GD",
                 "mle_recycle": true,
                 "mle_lr": 0.03,
@@ -45,9 +45,27 @@
                 "params_model_class": "ParameterModelLinear",
                 "params_model_class_config": {},
                 "eta_scale": 0.03,
+                "psi_inverse": 1,
+                "decay": true,
+                "regularization_factor_mle": 1,
+                "batch": false,
+                "N_t_explore": 0
+            }
+        },
+        {
+            "name": "TS-Langevin-psi0.04",
+            "alg_module": "ts.algorithms",
+            "alg_class": "ContextualThompsonSamplingLangevin",
+            "env": "Contextual",
+            "active": true,
+            "params": {
+                "N_t": 100,
+                "params_model_class": "ParameterModelLinear",
+                "params_model_class_config": {},
+                "eta_scale": 0.03,
                 "psi_inverse": 0.04,
                 "decay": true,
-                "regularization_factor_mle": 0,
+                "regularization_factor_mle": 1,
                 "batch": false,
                 "N_t_explore": 0
             }
@@ -68,15 +86,12 @@
         "context_distribution": "store_quarter",
         "context_distribution_params": {
             "store_ratios": [
-                0.7,
-                0.3
+                0.65,
+                0.35
             ]
         },
-        "max_T": 100,
-        "fix_model": false,
+        "max_T": 40000,
         "log_prog_every": 200,
-        "num_threads": 40,
-        "batch_size": 100,
         "repeat": 10,
         "tau": 8,
         "el": 0.25,

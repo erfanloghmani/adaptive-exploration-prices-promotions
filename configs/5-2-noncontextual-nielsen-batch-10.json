@@ -61,7 +61,6 @@
 		"costs": "zero",
 		"K": 9,
 		"max_T": 20000,
-		"fix_model": false,
 		"log_prog_every": 200,
 		"repeat": 40,
 		"tau": 10,
