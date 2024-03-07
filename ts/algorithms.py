@@ -18,6 +18,9 @@ class ThompsonSamplingLaplace:
         mle_method,
         mle_recycle,
         mle_lr,
+        x_mode,
+        fix_x_vector,
+        mle_steps,
     ):
         """Thompson Sampling for NonContextual Prices and Promotions Experiments
 
@@ -32,6 +35,8 @@ class ThompsonSamplingLaplace:
             mle_method (string): MLE method
             mle_recycle (boolean): Whether to recycle the parameters from previous step for MLE
             mle_lr (float): Learning rate of MLE
+            x_mode (str): Whether to learn x, fix x, or play a random x
+            fix_x_vector (list): The x vector to play if x_mode is "fix"
         """
         self.K = K
         self.tau = tau
@@ -46,6 +51,9 @@ class ThompsonSamplingLaplace:
         self.mle_lr = mle_lr
         self.fix_model = fix_model
         self.last_grad = None
+        self.x_mode = x_mode
+        self.fix_x_vector = torch.tensor(fix_x_vector)
+        self.mle_steps = mle_steps
 
     def next_price_x(self, env, c=None):
         """What price to play at the current state of the environment
@@ -72,6 +80,9 @@ class ThompsonSamplingLaplace:
             self.alpha_bar, self.beta_bar, self.gamma_bar = None, None, None
         else:
             if (env.t - self.tau) % self.batch_size == 0:
+                mle_steps = self.mle_steps
+                if (env.t - self.tau) == 0:
+                    mle_steps = int(mle_steps * (self.tau / self.batch_size))
                 (
                     self.alpha_bar,
                     self.beta_bar,
@@ -87,6 +98,7 @@ class ThompsonSamplingLaplace:
                     gammas_s_old=self.gamma_bar,
                     method=self.mle_method,
                     recycle=self.mle_recycle,
+                    steps=mle_steps,
                     lr=self.mle_lr,
                     regularization=self.regularization_factor_mle,
                 )
@@ -127,7 +139,16 @@ class ThompsonSamplingLaplace:
                 marginal_costs=env.model.marginal_costs,
                 x_set=env.model.x_set,
             )
-            p, x = model_res.max_mean_demand_price_x()
+            if self.x_mode == "learn":
+                p, x = model_res.max_mean_demand_price_x()
+            elif self.x_mode == "fix":
+                p = model_res.max_mean_demand_price_for_fixed_x(self.fix_x_vector)
+                x = self.fix_x_vector
+            elif self.x_mode == "random":
+                x = env.model.x_set[np.random.randint(env.model.x_set.shape[0])]
+                p = model_res.max_mean_demand_price_for_fixed_x(x)
+            else:
+                raise ValueError("x_mode must be one of 'learn', 'fix', 'random'")
             self.H += hessian_for_sample(self.model_bar, p, x)
             data = {
                 "alpha_bar": self.theta_bar[: self.K],

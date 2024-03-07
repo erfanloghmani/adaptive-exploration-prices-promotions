@@ -6,7 +6,14 @@ import numpy as np
 
 class M3P:
     def __init__(
-        self, K, regularization_factor_mle, mle_method, mle_recycle, mle_lr, **kwargs
+        self,
+        K,
+        regularization_factor_mle,
+        mle_method,
+        mle_recycle,
+        mle_lr,
+        decay,
+        **kwargs
     ):
         """M3P for NonContextual Prices and Promotions Experiments.
 
@@ -27,6 +34,7 @@ class M3P:
         self.mle_recycle = mle_recycle
         self.mle_lr = mle_lr
         self.last_grad = None
+        self.decay = decay
 
     def next_price_x(self, env, c=None):
         """What price to play at the current state of the environment
@@ -44,6 +52,9 @@ class M3P:
             self.alpha_bar, self.beta_bar, self.gamma_bar = None, None, None
         else:
             if self.current_idx == self.K:
+                mle_lr = self.mle_lr
+                if self.decay:
+                    mle_lr = self.mle_lr / env.t
                 (
                     self.alpha_bar,
                     self.beta_bar,
@@ -59,7 +70,7 @@ class M3P:
                     gammas_s_old=self.gamma_bar,
                     method=self.mle_method,
                     recycle=self.mle_recycle,
-                    lr=self.mle_lr,
+                    lr=mle_lr,
                     regularization=self.regularization_factor_mle,
                 )
             model_res = MultipleMNLModel(
