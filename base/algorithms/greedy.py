@@ -15,6 +15,7 @@ class Greedy:
         mle_recycle,
         mle_lr,
         mle_steps,
+        decay,
     ):
         """Greedy Algorithm For Prices and Promotions (Non-Contextual)
 
@@ -37,6 +38,7 @@ class Greedy:
         self.mle_lr = mle_lr
         self.mle_steps = mle_steps
         self.last_grad = None
+        self.decay = decay
 
     def next_price_x(self, env, c=None):
         """What price to play at the current state of the environment
@@ -54,6 +56,9 @@ class Greedy:
             self.alpha_bar, self.beta_bar, self.gamma_bar = None, None, None
             return (p, x), {}
         if (env.t - self.tau) % self.batch_size == 0:
+            mle_lr = self.mle_lr
+            if self.decay:
+                mle_lr = self.mle_lr / env.t
             (
                 self.alpha_bar,
                 self.beta_bar,
@@ -69,7 +74,7 @@ class Greedy:
                 gammas_s_old=self.gamma_bar,
                 method=self.mle_method,
                 recycle=self.mle_recycle,
-                lr=self.mle_lr,
+                lr=mle_lr,
                 regularization=self.regularization_factor_mle,
                 steps=self.mle_steps,
             )
