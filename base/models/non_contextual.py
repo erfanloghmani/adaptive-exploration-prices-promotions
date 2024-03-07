@@ -127,7 +127,7 @@ class MultipleMNLModel:
                 print("exception", (-(1 + self.betas * b_hat) + alphas_with_x, b_hat))
 
         def binary_search(start, end):
-            if end - start < 1e-10:
+            if end - start < 1e-9:
                 return start
             mid = (start + end) / 2
             if rhs(mid) - mid > 0:
