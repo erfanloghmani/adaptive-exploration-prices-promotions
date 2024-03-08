@@ -28,6 +28,8 @@ rolling_window = 300
 
 DPI = 600
 
+os.makedirs(f"{result_path}/paper_plots", exist_ok=True)
+
 
 def plot_with_ci(
     df,
@@ -1570,7 +1572,6 @@ if __name__ == "__main__":
         "7-2": 40000,
         "7-3": 40000,
     }
-    os.makedirs(f"{result_path}/paper_plots", exist_ok=True)
     if not args.all:
         experiment_fun = experiment_map[args.experiment]
         experiment_fun(T_map[args.experiment], result_path=result_path)
