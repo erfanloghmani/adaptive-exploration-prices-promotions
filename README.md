@@ -2,6 +2,11 @@
 
 This is the official repository containing implementations of the Thompson Sampling methods for adaptively setting prices and promotions proposed in the paper. Additionally, the code contains the baselines of Greedy, and M3P method. The repository contains code and instructions for reproducing the experimental results in the paper.
 
+## News
+
+- 🔥🔥🔥 [Feb 2024] The paper got accepted by the INFORMS Marketing Science Journal
+- 🔥🔥🔥 [June 2023] Prof. Lalit Jain presented the paper at Summer Institute in Competitive Strategy (SICS) 2023 UC Berkeley
+
 ## Citation
 
 If you find this repository useful for your research, please consider citing the following paper.
@@ -53,6 +58,10 @@ For instance, if you want to run the non-contextual experiment on the nielsen da
 ```bash
 python main.py --config configs/5-2-noncontextual-nielsen-batch-200.json
 ```
+
+## Tutorial
+
+The file [tutorial.ipynb](tutorial.ipynb) contains a tutorial on how to use the code, run the experiments, and generate the plots.
 
 ## WandB
 

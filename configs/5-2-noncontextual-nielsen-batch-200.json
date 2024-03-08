@@ -1,16 +1,33 @@
 {
     "algs": [
         {
-            "name": "M3P-lr0.01",
+            "name": "M3P-lr0.1",
             "alg_module": "m3p.algorithms",
             "alg_class": "M3P",
             "env": "NonContextual",
-            "active": false,
+            "active": true,
+            "params": {
+                "regularization_factor_mle": 1,
+                "mle_method": "GD",
+                "decay": false,
+                "mle_recycle": true,
+                "mle_lr": 0.1
+            }
+        },
+        {
+            "name": "Greedy-Batch-200-lr0.1",
+            "alg_module": "base.algorithms.greedy",
+            "alg_class": "Greedy",
+            "env": "NonContextual",
+            "active": true,
             "params": {
                 "regularization_factor_mle": 1,
                 "mle_method": "GD",
                 "mle_recycle": true,
-                "mle_lr": 0.01
+                "mle_lr": 0.1,
+                "decay": false,
+                "batch_size": 200,
+                "mle_steps": 100
             }
         },
         {
@@ -18,7 +35,7 @@
             "alg_module": "ts.algorithms",
             "alg_class": "ThompsonSamplingLaplace",
             "env": "NonContextual",
-            "active": false,
+            "active": true,
             "params": {
                 "mle_lr": 0.1,
                 "mle_method": "GD",
@@ -27,7 +44,10 @@
                 "regularization_factor_H": 1,
                 "regularization_factor_mle": 1,
                 "fix_model": true,
-                "batch_size": 200
+                "batch_size": 200,
+                "x_mode": "learn",
+                "fix_x_vector": [],
+                "mle_steps": 100
             }
         },
         {
@@ -35,67 +55,20 @@
             "alg_module": "ts.algorithms",
             "alg_class": "ThompsonSamplingLangevin",
             "env": "NonContextual",
-            "active": false,
+            "active": true,
             "params": {
-                "N_t": 200,
+                "N_t": 50,
                 "eta_scale": 0.01,
                 "psi_inverse": 0.5,
                 "decay": true,
                 "regularization_factor_mle": 1,
                 "fix_model": true,
                 "batch_size": 200
-            }
-        },
-        {
-            "name": "TS-Langevin-Batch-200-lr0.01-N_t100",
-            "alg_module": "ts.algorithms",
-            "alg_class": "ThompsonSamplingLangevin",
-            "env": "NonContextual",
-            "active": true,
-            "params": {
-                "N_t": 100,
-                "eta_scale": 0.01,
-                "psi_inverse": 0.5,
-                "decay": true,
-                "regularization_factor_mle": 1,
-                "fix_model": true,
-                "batch_size": 200
-            }
-        },
-        {
-            "name": "TS-Langevin-Batch-200-lr0.001",
-            "alg_module": "ts.algorithms",
-            "alg_class": "ThompsonSamplingLangevin",
-            "env": "NonContextual",
-            "active": true,
-            "params": {
-                "N_t": 200,
-                "eta_scale": 0.001,
-                "psi_inverse": 0.5,
-                "decay": true,
-                "regularization_factor_mle": 1,
-                "fix_model": true,
-                "batch_size": 200
-            }
-        },
-        {
-            "name": "Greedy-Batch-200-lr1",
-            "alg_module": "base.algorithms.greedy",
-            "alg_class": "Greedy",
-            "env": "NonContextual",
-            "active": false,
-            "params": {
-                "regularization_factor_mle": 1,
-                "mle_method": "GD",
-                "mle_recycle": true,
-                "mle_lr": 1,
-                "batch_size": 200,
-                "mle_steps": 100
             }
         }
     ],
     "global": {
-        "exp_name": "5-2-noncontextual-nielsen-batch-200-langevin-bests",
+        "exp_name": "5-2-noncontextual-nielsen-batch-200",
         "negative_beta_option": "max",
         "model_init_params": {},
         "dataset": "Nielsen",

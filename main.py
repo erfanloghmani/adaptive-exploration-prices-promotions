@@ -42,7 +42,7 @@ args = parser.parse_args()
 if len(args.save_path):
     path = f"{args.save_path}/results"
 else:
-    current_path = pathlib.Path(__file__).absolute()
+    current_path = pathlib.Path(__file__).parent.absolute()
     path = f"{current_path}/results"
 
 print(f"Saving results to {path}")
@@ -112,15 +112,24 @@ def run_single_iteration(r, alg_param, global_params, exp_id):
         xs.append(T + 1)
 
         if write_runs and (T + 1) % checkpoint == 0:
-            create_dataframes(path, alg, xs, r, write=write_runs, exp_id=exp_id)
+            create_dataframes(
+                path,
+                alg,
+                xs,
+                r,
+                timediff=now - start_time,
+                write=write_runs,
+                exp_id=exp_id,
+            )
 
-    regret_df, grad_df, regret_at_time_df, history_dfs = create_dataframes(
-        path, alg, xs, r, write=False, exp_id=exp_id
+    end_time = datetime.now()
+    regret_df, grad_df, regret_at_time_df, history_dfs, time_df = create_dataframes(
+        path, alg, xs, r, timediff=end_time - start_time, write=False, exp_id=exp_id
     )
 
     if args.wandb:
         wandb.finish()
-    return (regret_df, regret_at_time_df, grad_df, history_dfs)
+    return (regret_df, regret_at_time_df, grad_df, history_dfs, time_df)
 
 
 if __name__ == "__main__":
@@ -163,6 +172,7 @@ if __name__ == "__main__":
     reg_steps = [r[1] for r in results]
     grads = [r[2] for r in results]
     histories = [r[3] for r in results]
+    times = [r[4] for r in results]
 
     history_names = ["choice", "price", "demand", "x", "context"]
     for i, history_name in enumerate(history_names):
@@ -188,6 +198,9 @@ if __name__ == "__main__":
     plot_with_ci(
         grads, "GradientNorm", f"{path}/{exp_id}/gradient_size.png", names, log=True
     )
+
+    times_df = pd.concat(times)
+    times_df.to_csv(f"{path}/{exp_id}/times.csv")
 
     with open(f"{path}/{exp_id}/config.json", "w") as outfile:
         json.dump(params, outfile)

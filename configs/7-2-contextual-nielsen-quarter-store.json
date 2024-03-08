@@ -51,24 +51,6 @@
                 "batch": false,
                 "N_t_explore": 0
             }
-        },
-        {
-            "name": "TS-Langevin-psi0.04",
-            "alg_module": "ts.algorithms",
-            "alg_class": "ContextualThompsonSamplingLangevin",
-            "env": "Contextual",
-            "active": true,
-            "params": {
-                "N_t": 100,
-                "params_model_class": "ParameterModelLinear",
-                "params_model_class_config": {},
-                "eta_scale": 0.03,
-                "psi_inverse": 0.04,
-                "decay": true,
-                "regularization_factor_mle": 1,
-                "batch": false,
-                "N_t_explore": 0
-            }
         }
     ],
     "global": {

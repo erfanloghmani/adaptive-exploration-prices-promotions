@@ -5,6 +5,7 @@ from base.parameter_models import get_parameter_model_class
 
 import m3p.algorithms
 import base.algorithms.greedy
+import base.algorithms.expthencommit
 import ts.algorithms
 
 from matplotlib import pyplot as plt
@@ -24,7 +25,7 @@ def alg_creator(alg_module, alg_class, params):
             params["params_model_class"]
         )
     try:
-        print(alg_module, alg_class)
+        print(f'Instantiating {alg_module}.{alg_class}')
         C = getattr(sys.modules[alg_module], alg_class)
         return C(**params)
     except Exception as e:
@@ -38,7 +39,7 @@ def get_parameter_model_class(c_str):
         raise Exception("Unknown Parameter Class")
 
 
-def create_dataframes(path, alg, xs, r, write, exp_id):
+def create_dataframes(path, alg, xs, r, write, exp_id, timediff):
     T = len(xs)
 
     regret_df = {"Regret": np.array(alg.ys), "T": xs, "run": r, "Algorithm": alg.name}
@@ -141,6 +142,9 @@ def create_dataframes(path, alg, xs, r, write, exp_id):
         ds_regret_at_time.repartition(1).write_csv(
             f"{output_dir}/regret_at_time_run.csv"
         )
+    time_df = pd.DataFrame(
+        [{"timediff": timediff.total_seconds(), "run": r, "Algorithm": alg.name}]
+    )
     return (
         regret_df,
         grad_df,
@@ -152,6 +156,7 @@ def create_dataframes(path, alg, xs, r, write, exp_id):
             x_history_df,
             context_history_df,
         ),
+        time_df,
     )
 
 
@@ -215,7 +220,8 @@ def get_env_creator(global_params, alg_param):
                 np.load(f"params/nielsen_gammas_{nielsen_n}.npy")
             ).float()[:K]
         elif global_params["dataset"] == "simgam0":
-            print("JUST REMEMBER, use three products when doing simgam0")
+            if K != 3:
+                raise Exception("You should use three products (K = 3) when doing simgam0")
             alphas = torch.tensor([1, 2, 3, 1, 2, 3]).float()[:K]
             betas = torch.tensor([0.1, 0.2, 0.3, 0.5, 0.6, 0.7]).float()[:K]
             gammas = torch.tensor([0.8, 0.5, 0.3, 0.1, 0.1, 0.1]).float()[:K]
