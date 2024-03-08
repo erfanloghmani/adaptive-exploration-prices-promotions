@@ -27,6 +27,10 @@ If you find this repository useful for your research, please consider citing the
 3. The code is easy to setup and can handle batched data to reduce the runtime. Additionally, the code uses a computationally efficient model for finding optimal prices and promotions.
 4. Using `ray`, the code can easily run in a distributed mode using multiple compute machines.
 
+## Tutorial
+
+This [colab notebook](https://colab.research.google.com/drive/17Ph69UmOv6rfKeV6ZCWxfhbQxo2UIVvY?usp=sharing) contains a tutorial on how to use the code, run the experiments, and generate the plots. The file [tutorial.ipynb](tutorial.ipynb) in the repository also follows the same tutorial.
+
 ## Prerequisites
 
 This repo is tested with Python 3.10.8 and PyTorch 1.13.0 in Ubuntu 20.04.1 environment. To install the dependencies use the following command inside your virtual environment.
@@ -58,10 +62,6 @@ For instance, if you want to run the non-contextual experiment on the nielsen da
 ```bash
 python main.py --config configs/5-2-noncontextual-nielsen-batch-200.json
 ```
-
-## Tutorial
-
-The file [tutorial.ipynb](tutorial.ipynb) contains a tutorial on how to use the code, run the experiments, and generate the plots.
 
 ## WandB
 
